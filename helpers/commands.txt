@@ -1,0 +1,37 @@
+sed -n -e '1,10p' input.txt > output.txt
+
+# Generate Depth predictions
+python ./src/main.py --config src/configs/sdn_kitti_test.config \
+    --data_list=./split/test_sub.txt \
+        --generate_depth_map --data_tag test
+
+# Convert depth maps to Pseudo-Lidar Point Clouds
+python ./src/preprocess/generate_lidar_from_depth.py \
+    --calib_dir  ./kitti/testing/calib \
+        --depth_dir ./results/sdn_kitti_test_sub/depth_maps/test/ \
+            --save_dir  ./results/sdn_kitti_test_sub/pseudo_lidar/
+
+# Predict Ground Planes
+python ./src/preprocess/kitti_process_RANSAC.py --calib_dir  ./kitti/testing/calib \
+    --lidar_dir ./results/sdn_kitti_test_sub/pseudo_lidar/  \
+    --planes_dir  ./results/sdn_kitti_test_sub/pseudo_lidar_planes/
+
+# get depth map from lidar
+python ptc2depthmap.py --output_path ./results/sdn_kitti_test_sub/gt_depth_maps/ \
+    --input_path ../kitti/testing/velodyne/ \
+    --calib_path ../kitti/testing/calib \
+    --image_path ../kitti/testing/image_2/ \
+    --split_file ../split/test_sub.txt
+
+# GDC
+python main_batch.py --input_path ../results/sdn_kitti_test_sub/depth_maps/test/ \
+    --calib_path ../kitti/testing/calib \
+    --gt_depthmap_path ./results/sdn_kitti_test_sub/gt_depth_maps/ \
+    --output_path ../results/sdn_kitti_test_sub/depth_maps/test/corrected \
+    --split_file ../split/test_sub.txt
+
+# Get PC for corrected depth
+python depthmap2ptc.py --output_path ../results/sdn_kitti_test_sub/pseudo_lidar/corrected \
+    --input_path ../results/sdn_kitti_test_sub/depth_maps/test/corrected \
+    --calib_path ../kitti/testing/calib \
+    --split_file ../split/test_sub.txt

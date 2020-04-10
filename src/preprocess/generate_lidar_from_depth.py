@@ -5,7 +5,6 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import kitti_util
 import numpy as np
 
-
 def project_disp_to_depth(calib, depth, max_high):
     rows, cols = depth.shape
     c, r = np.meshgrid(np.arange(cols), np.arange(rows))
@@ -28,6 +27,10 @@ if __name__ == '__main__':
     parser.add_argument('--max_high', type=int, default=1)
     args = parser.parse_args()
 
+    for key, value in sorted(vars(args).items()):
+        print("{} : {}".format(key, value))
+        # log.info(str(key) + ': ' + str(value))
+
     assert os.path.isdir(args.depth_dir)
     assert os.path.isdir(args.calib_dir)
 
@@ -36,10 +39,11 @@ if __name__ == '__main__':
 
     depths = [x for x in os.listdir(args.depth_dir) if x[-3:] == 'npy' and 'std' not in x]
     depths = sorted(depths)
-
+    # print("depths: {}".format(depths))
     for fn in depths:
         predix = fn[:-4]
         calib_file = '{}/{}.txt'.format(args.calib_dir, predix)
+        # print("Running depth: {}, calib_file: {}".format(fn, calib_file))
         calib = kitti_util.Calibration(calib_file)
         depth_map = np.load(args.depth_dir + '/' + fn)
         lidar = project_disp_to_depth(calib, depth_map, args.max_high)

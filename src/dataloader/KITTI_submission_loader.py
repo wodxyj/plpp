@@ -48,7 +48,7 @@ class SubmiteDataset(object):
         with open(split, 'r') as f:
             image = [x.strip() for x in f.readlines() if len(x.strip()) > 0]
         image = sorted(image)
-
+        
         if kitti2015:
             self.left_test = [filepath + '/' + left_fold + img + '_10.png' for img in image]
             self.right_test = [filepath + '/' + right_fold + img + '_10.png' for img in image]

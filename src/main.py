@@ -53,9 +53,9 @@ parser.add_argument('--split_val', default='Kitti/object/subval.txt',
                     help='data splitting file for validation')
 parser.add_argument('--epochs', type=int, default=300,
                     help='number of training epochs')
-parser.add_argument('--btrain', type=int, default=12,
+parser.add_argument('--btrain', type=int, default=3,
                     help='training batch size')
-parser.add_argument('--bval', type=int, default=4,
+parser.add_argument('--bval', type=int, default=1,
                     help='validation batch size')
 parser.add_argument('--workers', type=int, default=8,
                     help='number of dataset workers')
@@ -171,7 +171,7 @@ def main():
             log.info('[Attention]: Can not find checkpoint {}'.format(args.resume))
 
     if args.generate_depth_map:
-        os.makedirs(args.save_path + '/depth_maps+/' + args.data_tag, exist_ok=True)
+        os.makedirs(args.save_path + '/depth_maps/' + args.data_tag, exist_ok=True)
 
         tqdm_eval_loader = tqdm(TestImgLoader, total=len(TestImgLoader))
         for batch_idx, (imgL_crop, imgR_crop, calib, H, W, filename) in enumerate(tqdm_eval_loader):

@@ -50,6 +50,8 @@ def convert_and_save(args, i):
     depth_map = get_depth_map(ptc, calib, img)
     np.save(osp.join(args.output_path, "{:06d}".format(i)), depth_map)
 
+    print("Converting for {}".format(i))
+
 if __name__ == "__main__":
     if not os.path.exists(args.output_path):
         os.makedirs(args.output_path)
@@ -65,6 +67,7 @@ if __name__ == "__main__":
         with open(args.split_file) as f:
             idx_list = [int(x.strip())
                 for x in f.readlines() if len(x.strip()) > 0]
+        print("Will convert {} files".format(len(idx_list)))
         pbar = tqdm(total=len(idx_list))
         def update(*a):
             pbar.update()
