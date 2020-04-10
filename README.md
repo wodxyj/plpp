@@ -1,3 +1,5 @@
+# This is a modified version of https://github.com/mileyan/Pseudo_Lidar_V2
+
 # Pseudo-LiDAR++: Accurate Depth for 3D Object Detection in Autonomous Driving
 This paper has been accpeted by International Conference on Learning Representations ([ICLR](https://iclr.cc/)) 2020.
 
